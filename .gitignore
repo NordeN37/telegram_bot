@@ -1,0 +1,8 @@
+.vs
+.vscode
+.idea
+
+*.exe
+*.env
+*.prev
+*.db
