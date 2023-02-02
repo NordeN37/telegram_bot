@@ -3,7 +3,6 @@ module github.com/NordeN37/telegram_bot
 go 1.17
 
 require (
-	github.com/NordeN37/parser_html_page v0.0.5
 	github.com/go-telegram-bot-api/telegram-bot-api v1.0.1-0.20201107014523-54104a08f947
 	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/rs/zerolog v1.29.0
@@ -12,6 +11,7 @@ require (
 )
 
 require (
+	github.com/NordeN37/parser_html_page v0.0.5 // indirect
 	github.com/PuerkitoBio/goquery v1.8.0 // indirect
 	github.com/andybalholm/cascadia v1.3.1 // indirect
 	github.com/jinzhu/inflection v1.0.0 // indirect
