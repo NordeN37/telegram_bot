@@ -40,8 +40,8 @@ func telegramBotConnect(handler IHandler, logger *zerolog.Logger, cfg *config.Co
 			}
 
 			switch resHandle.(type) {
-			case tgbotapi.MessageConfig:
-				bot.Send(resHandle.(tgbotapi.MessageConfig))
+			case tgbotapi.Chattable:
+				bot.Send(resHandle.(tgbotapi.Chattable))
 			}
 		}
 	}
