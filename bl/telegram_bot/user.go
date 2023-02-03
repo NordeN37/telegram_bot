@@ -8,8 +8,9 @@ import (
 )
 
 type IUser interface {
-	GetByTelegramId(ctx context.Context, telegramId int) (*models.User, error)
+	GetByTelegramId(ctx context.Context, telegramId int64) (*models.User, error)
 	Create(ctx context.Context, data *models.User) error
+	FirstOrCreate(ctx context.Context, data *models.User, telegramId int64) (*models.User, error)
 }
 
 type user struct {
@@ -21,10 +22,14 @@ func NewUser(db *store.DBRepo, log *zerolog.Logger) IUser {
 	return &user{db: db, log: log}
 }
 
-func (u user) GetByTelegramId(ctx context.Context, telegramId int) (*models.User, error) {
+func (u user) GetByTelegramId(ctx context.Context, telegramId int64) (*models.User, error) {
 	return u.db.User.GetByTelegramId(ctx, telegramId)
 }
 
 func (u user) Create(ctx context.Context, data *models.User) error {
 	return u.db.User.Create(ctx, data)
+}
+
+func (u user) FirstOrCreate(ctx context.Context, data *models.User, telegramId int64) (*models.User, error) {
+	return u.db.User.FirstOrCreate(ctx, data, telegramId)
 }

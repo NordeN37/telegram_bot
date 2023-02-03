@@ -8,8 +8,9 @@ import (
 )
 
 type IUser interface {
-	GetByTelegramId(ctx context.Context, telegramId int) (*models.User, error)
+	GetByTelegramId(ctx context.Context, telegramId int64) (*models.User, error)
 	Create(ctx context.Context, data *models.User) error
+	FirstOrCreate(ctx context.Context, data *models.User, telegramId int64) (*models.User, error)
 }
 
 type user struct {
@@ -22,7 +23,7 @@ func NewUser(db *gorm.DB) IUser {
 
 type User struct {
 	gorm.Model
-	TelegramId   int
+	TelegramId   int64
 	FirstName    string
 	LastName     string
 	UserName     string
@@ -36,7 +37,7 @@ func (u *User) fromModels(data *models.User) error {
 	u.LastName = data.LastName
 	u.UserName = data.UserName
 	u.FirstName = data.FirstName
-	u.TelegramId = data.ID
+	u.TelegramId = data.TelegramId
 	u.LanguageCode = data.LanguageCode
 	return nil
 }
@@ -46,13 +47,13 @@ func (u *User) toModels() *models.User {
 		FirstName:    u.FirstName,
 		LastName:     u.LastName,
 		UserName:     u.UserName,
-		ID:           u.TelegramId,
+		TelegramId:   u.TelegramId,
 		LanguageCode: u.LanguageCode,
 	}
 	return res
 }
 
-func (u user) GetByTelegramId(ctx context.Context, telegramId int) (*models.User, error) {
+func (u user) GetByTelegramId(ctx context.Context, telegramId int64) (*models.User, error) {
 	var us User
 	if err := u.db.WithContext(ctx).First(&us, "telegram_id = ?", telegramId).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
@@ -72,4 +73,15 @@ func (u user) Create(ctx context.Context, data *models.User) error {
 		return errors.Ctx().Just(err)
 	}
 	return nil
+}
+
+func (u user) FirstOrCreate(ctx context.Context, data *models.User, telegramId int64) (*models.User, error) {
+	create := User{}
+	//if err := create.fromModels(data); err != nil {
+	//	return nil, errors.Ctx().Just(err)
+	//}
+	if err := u.db.WithContext(ctx).Where("telegram_id = ?", telegramId).Attrs(data).FirstOrCreate(&create).Error; err != nil {
+		return nil, errors.Ctx().Just(err)
+	}
+	return create.toModels(), nil
 }

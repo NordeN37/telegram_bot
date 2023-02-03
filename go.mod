@@ -3,7 +3,7 @@ module github.com/NordeN37/telegram_bot
 go 1.17
 
 require (
-	github.com/go-telegram-bot-api/telegram-bot-api v1.0.1-0.20201107014523-54104a08f947
+	github.com/go-telegram-bot-api/telegram-bot-api/v5 v5.5.2-0.20221020003552-4126fa611266
 	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/rs/zerolog v1.29.0
 	gorm.io/driver/sqlite v1.4.4

@@ -41,7 +41,7 @@ func connectWithGORMRetry(logger *zerolog.Logger, settings *config.Config) (*gor
 		case <-ticker.C:
 			try++
 			ticker.Stop()
-			client, err := connectWithGORM(logger, settings.DBPath)
+			client, err := connectWithGORM(logger, settings.DBPath, settings)
 			if err != nil {
 				logger.Warn().Err(err).Msgf("не удалось установить соединение с SQLite, попытка № %d", try)
 
@@ -61,13 +61,16 @@ func connectWithGORMRetry(logger *zerolog.Logger, settings *config.Config) (*gor
 	}
 }
 
-func connectWithGORM(logger *zerolog.Logger, dbPath string) (*gorm.DB, error) {
-	// github.com/mattn/go-sqlite3
+func connectWithGORM(logger *zerolog.Logger, dbPath string, settings *config.Config) (*gorm.DB, error) {
+	logLevel := gormLogger.Warn
+	if settings.TraceSQLCommands {
+		logLevel = gormLogger.Info
+	}
 	db, err := gorm.Open(sqlite.Open(dbPath), &gorm.Config{
 		Logger: NewLogger(logger, gormLogger.Config{
 			// временной зазор определения медленных запросов SQL
 			SlowThreshold: time.Duration(600) * time.Second,
-			LogLevel:      gormLogger.Info,
+			LogLevel:      logLevel,
 			Colorful:      false,
 		}),
 		AllowGlobalUpdate: true,

@@ -1,7 +1,7 @@
 package models
 
 import (
-	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
+	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 )
 
 type TelegramBotUserInfo struct {
@@ -10,7 +10,7 @@ type TelegramBotUserInfo struct {
 
 // User represents a Telegram user or bot.
 type User struct {
-	ID           int
+	TelegramId   int64
 	FirstName    string
 	LastName     string
 	UserName     string
@@ -18,7 +18,7 @@ type User struct {
 }
 
 func (u User) ToModels(user *tgbotapi.User) *User {
-	u.ID = user.ID
+	u.TelegramId = user.ID
 	u.UserName = user.UserName
 	u.LastName = user.LastName
 	u.FirstName = user.FirstName

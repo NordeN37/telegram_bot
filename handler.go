@@ -5,7 +5,7 @@ import (
 	"github.com/NordeN37/telegram_bot/bl"
 	"github.com/NordeN37/telegram_bot/models"
 	"github.com/NordeN37/telegram_bot/utils/errors"
-	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
+	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 	"github.com/rs/zerolog"
 )
 
@@ -25,16 +25,13 @@ func NewHandler(bl *bl.BL, logger *zerolog.Logger) IHandler {
 func (h handler) MakeServiceHandler(ctx context.Context, update tgbotapi.Update) (interface{}, error) {
 	switch update.Message.Text {
 	case "/start":
-		_, err := h.bl.User.GetByTelegramId(ctx, update.Message.From.ID)
+		_, err := h.bl.User.FirstOrCreate(ctx, (models.User{}).ToModels(update.Message.From), update.Message.From.ID)
 		if err != nil {
-			if errors.Is(err, errors.ErrRecordingNotFound) {
-				if err = h.bl.User.Create(ctx, (models.User{}).ToModels(update.Message.From)); err != nil {
-					return nil, errors.Ctx().Just(err)
-				}
-			} else {
-				return nil, errors.Ctx().Just(err)
-			}
+			return nil, errors.Ctx().Just(err)
 		}
+		msg := tgbotapi.NewMessage(update.Message.Chat.ID, "hi")
+		msg.ReplyToMessageID = update.Message.MessageID
+		return msg, nil
 	case "/ping":
 		res := h.bl.TelegramBot.Ping()
 		msg := tgbotapi.NewMessage(update.Message.Chat.ID, res)
