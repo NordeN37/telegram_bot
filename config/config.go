@@ -6,7 +6,7 @@ import (
 )
 
 type Config struct {
-	LogLevel          string `envconfig:"LOG_LEVEL" default:"info"`
+	LogLevel          string `envconfig:"LOG_LEVEL" default:"debug"`
 	DBPath            string `envconfig:"DB_PATH" default:"./telegram_bot.db"`
 	AutoMigrate       bool   `envconfig:"AUTO_MIGRATE" default:"true"`
 	MyAwesomeBotToken string `envconfig:"MY_AWESOME_BOT_TOKEN"`
